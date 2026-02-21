@@ -3,6 +3,8 @@
 #include <string> 
 #include <vector>
 #include <unordered_map>
+#include <ranges>
+#include <climits>
 using namespace std;
 
 struct ListNode {
@@ -175,6 +177,60 @@ public:
         }
         return ans;
     }
+
+    //Z字变换 模拟
+    string _6_convert(string s, int numRows) {
+        string ret = "";
+        if (numRows == 1 || numRows > s.size())  return s;
+        vector<string> st(numRows);
+        int i = 0, flag = 1;
+        for (char c : s)
+        {
+            st[i] += c;
+            i += flag;
+            if (i == numRows - 1 || i == 0)    flag = -flag;
+        }
+        for (const string& str : st)
+        {
+            ret += str;
+        }
+        return ret;
+    }
+    //7 整数翻转 模拟
+    int _7_reverse(int x) {
+        if (x == INT_MIN) {
+            return 0;
+        }
+
+        int flag = 1;
+        if (x < 0) {
+            flag = -1;
+            x = -x; // 仅当x≠INT_MIN时可安全取反
+        }
+
+        //  转为字符串并通过C++20 views反转
+        string temp = to_string(x);
+        
+        auto reversed_view = temp | views::reverse;
+        string reversed_str(reversed_view.begin(), reversed_view.end());
+
+        int result = 0;
+        for (char c : reversed_str) {
+            int digit = c - '0';
+
+            //  result > INT_MAX / 10 → 乘10后必超
+            //  result == INT_MAX / 10 且 digit > INT_MAX % 10 → 加digit后超
+            if (result > INT_MAX / 10 || (result == INT_MAX / 10 && digit > INT_MAX % 10)) {
+                return 0; // 溢出则返回0
+            }
+
+            // 无溢出时累加
+            result = result * 10 + digit;
+        }
+
+        return flag * result;
+    }
+
 };
 
 
