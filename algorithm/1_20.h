@@ -231,6 +231,161 @@ public:
         return flag * result;
     }
 
+    //8 字符串转换整数 模拟
+    int _8_myAtoi(string s) {
+        int i = 0, n = s.length();
+        while (s[i] == ' ')
+            i++;
+
+        int sign = 1;
+        if (i < n && (s[i] == '+' || s[i] == '-'))
+            sign = s[i++] == '+' ? 1 : -1;
+
+        int ans = 0;
+        while (i < n && s[i] >= '0' && s[i] <= '9')
+        {
+            int cur = s[i] - '0';
+            if (ans > INT_MAX / 10 || ans * 10 > INT_MAX - cur)
+                return sign == 1 ? INT_MAX : INT_MIN;
+
+            ans *= 10;
+            ans += cur;
+            i++;
+        }
+        return ans * sign;
+    }
+     
+    //9 回文数 模拟
+    bool _9_isPalindrome(int x) {
+        //如果这个数字不是回文数 转字符串翻转有可能溢出 直接判断回文字符串
+        //auto s = to_string(x);
+        //int left = 0, right = s.length() - 1;
+        //while (left <= right)
+        //{
+        //    if (s[left] != s[right])    return false;
+        //    left++;
+        //    right--;
+        //}
+        //return true;
+
+        if (x < 0 || x > 0 && x % 10 == 0) {
+            return false;
+        }
+        int rev = 0;
+        while (rev < x / 10)
+        {
+            int d = x % 10;
+            x /= 10;
+            rev = rev * 10 + d;
+        }
+        return rev == x / 10 || rev == x;
+    }
+
+    //10 正则表达式匹配 
+    bool _10_isMatch(string s, string p) {
+        int m = s.size(), n = p.size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1));
+        dp[0][0] = true;
+
+        auto mattch = [&](int i, int j) {
+            if (i == 0)    return false;
+            return p[j - 1] == '.' ? true : s[i - 1] == p[j - 1];
+            };
+        for (int i = 0; i <= m; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                if (p[j - 1] == '*')
+                {
+                    //匹配0次
+                    dp[i][j] |= dp[i][j - 2];
+                    //匹配多次
+                    if (mattch(i, j - 1))
+                    {
+                        dp[i][j] |= dp[i - 1][j];
+                    }
+                }
+                else
+                {
+                    if (mattch(i, j))
+                    {
+                        dp[i][j] |= dp[i - 1][j - 1];
+                    }
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    // 11 盛最多水的容器 双指针
+    int _11_maxArea(vector<int>& height) {
+        int ans = 0;
+        int n = height.size();
+        int left = 0, right = n - 1, h = 0;
+        while (left < right)
+        {
+            h = min(height[left], height[right]);
+            int cur = h * (right - left);
+            ans = max(ans, cur);
+            if (height[left] > height[right])    right--;
+            else    left++;
+        }
+        return ans;
+    }
+
+    //12  转化罗马数字
+    string _12_intToRoman(int num) {
+        const pair<int, string> valueSymbols[] = {
+            {1000, "M"},
+            {900,  "CM"},
+            {500,  "D"},
+            {400,  "CD"},
+            {100,  "C"},
+            {90,   "XC"},
+            {50,   "L"},
+            {40,   "XL"},
+            {10,   "X"},
+            {9,    "IX"},
+            {5,    "V"},
+            {4,    "IV"},
+            {1,    "I"},
+        };
+        string roman;
+        for (const auto& [value, symbol] : valueSymbols) {
+            while (num >= value) {
+                num -= value;
+                roman += symbol;
+            }
+            if (num == 0) {
+                break;
+            }
+        }
+        return roman;
+    }
+    // 13 罗马转数字
+    int _13_romanToInt(string s) {
+        unordered_map<char, int> hash = {
+            {'I', 1},
+            {'V', 5},
+            {'X', 10},
+            {'L', 50},
+            {'C', 100},
+            {'D', 500},
+            {'M', 1000},
+        };
+        int ans = 0;
+        int n = s.length();
+        for (int i = 0; i < n; ++i) {
+            int value = hash[s[i]];
+            if (i < n - 1 && value < hash[s[i + 1]]) {
+                ans -= value;
+            }
+            else {
+                ans += value;
+            }
+        }
+        return ans;
+    }
 };
 
 
