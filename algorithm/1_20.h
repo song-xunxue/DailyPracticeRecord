@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <ranges>
 #include <climits>
+#include <algorithm>
 using namespace std;
 
 struct ListNode {
@@ -386,6 +387,105 @@ public:
         }
         return ans;
     }
+
+    //14 最长公共子串
+    string longestCommonPrefix(vector<string>& strs) {
+        string ans = strs[0];
+        for (auto s : strs)
+        {
+            ans = CommonPrefix(ans, s);
+        }
+        return ans;
+    }
+    string CommonPrefix(const string& s1, const string& s2)
+    {
+        int length = min(s1.size(), s2.size());
+        int index = 0;
+        while (index < length && s1[index] == s2[index]) {
+            ++index;
+        }
+        return s1.substr(0, index);
+    }
+
+    //15  三数之和
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int n = nums.size();
+        if (n < 3) return {};
+        vector<vector<int>> res;
+        sort(nums.begin(), nums.end());
+
+        for (int i = 0; i < n - 1;)
+        {
+            int target = -nums[i];
+            int l = i + 1, r = n - 1;
+            while (l < r)
+            {
+                if (nums[l] + nums[r] > target)  r--;
+                else if (nums[l] + nums[r] < target) l++;
+                else
+                {
+                    res.push_back({ nums[i],nums[l],nums[r] });
+                    l++;
+                    r--;
+                    while (l < r && nums[l] == nums[l - 1])    l++;
+                    while (l < r && nums[r] == nums[r + 1])    r--;
+                }
+            }
+            i++;
+            while (i < n - 1 && nums[i] == nums[i - 1])    i++;
+        }
+        return res;
+    }
+
+    //16 最接近的三数之和
+    int threeSumClosest(vector<int>& nums, int target) {
+        int n = nums.size();
+        if (n < 3) return {};
+        sort(nums.begin(), nums.end());
+        int d = 1e7;
+        auto update = [&](int cur) {
+            if (abs(cur - target) < abs(d - target)) {
+                d = cur;
+            }
+            };
+
+        for (int i = 0; i < n; i++)
+        {
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+
+            int l = i + 1, r = n - 1;
+            while (l < r)
+            {
+                int sum = nums[l] + nums[r] + nums[i];
+                update(sum);
+                if (sum == target) {
+                    return target;
+                }
+                if (sum > target)
+                {
+                    int r0 = r - 1;
+                    // 移动到下一个不相等的元素
+                    while (l < r0 && nums[r0] == nums[r]) {
+                        --r0;
+                    }
+                    r = r0;
+                }
+                else if (sum < target)
+                {
+                    int l0 = l + 1;
+                    while (l0 < r && nums[l0] == nums[l])
+                    {
+                        ++l0;
+                    }
+                    l = l0;
+                }
+            }
+        }
+        return d;
+    }
+
 };
 
 
