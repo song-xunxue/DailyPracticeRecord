@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string> 
 #include <vector>
+#include <stack>
 #include <unordered_map>
 #include <ranges>
 #include <climits>
@@ -484,6 +485,110 @@ public:
             }
         }
         return d;
+    }
+    //18四数之和
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        for (const auto& v : nums)
+        {
+            cout << v << " ";
+        }
+        cout << endl;
+        vector<vector<int>> v;
+        if (nums.size() < 4)   return {};
+        for (int j = 0; j < nums.size() - 2;)
+        {
+            for (int i = j + 1; i < nums.size() - 1;)
+            {
+                int left = i + 1, right = nums.size() - 1;
+                long long Mytarget = (long long)target - nums[i] - nums[j];
+
+
+                while (left < right)
+                {
+
+                    if (nums[left] + nums[right] > Mytarget)
+                    {
+                        right--;
+                    }
+                    else if (nums[left] + nums[right] < Mytarget)
+                    {
+                        left++;
+                    }
+                    else
+                    {
+                        v.push_back({ nums[j],nums[i],nums[left],nums[right] });
+                        right--;
+                        left++;
+                        while (left < right && nums[left] == nums[left - 1])   left++;
+                        while (left < right && nums[right] == nums[right + 1])   right--;
+                    }
+                }
+
+                i++;
+                while (i < nums.size() - 1 && nums[i] == nums[i - 1])   i++;
+            }
+            j++;
+            while (j < nums.size() - 2 && nums[j] == nums[j - 1])   j++;
+
+        }
+        return v;
+    }
+
+    //19  删除链表的第N个结点
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        int N = 0;
+        ListNode* cur = head;
+        while (cur)
+        {
+            N++;
+            cur = cur->next;
+        }
+        N -= n;
+        ListNode* prev = head;
+        cur = head;
+        if (N == 0)
+        {
+            head = head->next;
+            delete prev;
+            return head;
+        }
+        while (N > 0)
+        {
+            prev = cur;
+            cur = cur->next;
+            N--;
+        }
+        prev->next = cur ? cur->next : nullptr;
+        delete cur;
+        return head;
+    }
+
+    //20 有效括号
+    bool isValid(string s) {
+        int n = s.size();
+        if (n % 2 == 1)  return false;
+
+        stack<char> stc;
+        unordered_map<char, char> hash = { {'(',')'},{'[',']'},{'{','}'} };
+
+
+        for (auto c : s)
+        {
+            if (c == '(' || c == '[' || c == '{')
+                stc.push(c);
+            else
+                if (stc.empty()) return false;
+                else
+                {
+                    char top = stc.top();
+                    stc.pop();
+                    if (c != hash[top])  return false;
+                }
+
+        }
+        if (!stc.empty())    return false;
+        return true;
     }
 
 };
