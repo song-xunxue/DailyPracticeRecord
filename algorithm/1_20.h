@@ -702,6 +702,7 @@ public:
         cur->next = list1 ? list1 : list2;
         return dummy->next;
     }
+    // 上面是合并两个的 可以遍历合并
     ListNode* _mergeKLists(vector<ListNode*>& lists, int begin, int end) {
         if (begin == end)     return lists[begin];
         int mid = (begin + end) / 2;
@@ -714,6 +715,51 @@ public:
         if (n == 0)    return nullptr;
         return _mergeKLists(lists, 0, n - 1);
     }
+
+    //24 两两交换链表中的节点
+    ListNode* swapPairs(ListNode* head) {
+        if (!head || !head->next)   return head;
+        ListNode* newhead = new ListNode();
+        ListNode* pHead = newhead;
+        ListNode* p1 = head;
+        while (p1 && p1->next)
+        {
+            ListNode* p2 = p1->next;
+            ListNode* p3 = p2->next;
+
+            pHead->next = p2;
+            p2->next = p1;
+            p1->next = p3;
+            pHead = p1;
+            p1 = p3;
+        }
+        return newhead->next;
+    }
+
+    // 25 K个一组的翻转 合上一题一样的
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        ListNode* newhead = new ListNode();
+        ListNode* newcur = newhead;
+        ListNode* cur = head;
+        stack<ListNode*> s;
+        while (cur)
+        {
+            s.push(cur);
+            cur = cur->next;
+            if (s.size() == k)
+            {
+                while (s.size())
+                {
+                    newcur->next = s.top();
+                    s.pop();
+                    newcur = newcur->next;
+                }
+                newcur->next = cur;
+            }
+        }
+        return newhead->next;
+    }
+
 };
 
 
