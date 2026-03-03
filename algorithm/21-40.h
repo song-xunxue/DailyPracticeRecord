@@ -170,7 +170,54 @@ public:
         }
         return newhead->next;
     }
+    
 
+    //26 删除有序数组中的重复项
+    int removeDuplicates(vector<int>& nums) {
+        //双指针一次遍历
+        int left = 0, right = 0, n = nums.size();
+        for (; right < n; right++)
+        {
+            if (nums[left] != nums[right])
+            {
+                nums[++left] = nums[right];
+            }
+        }
+        return left + 1;
+    }
 
+    //27 移除元素
+    int removeElement(vector<int>& nums, int val) {
+        int n = nums.size();
+        int left = 0, right = 0;
+        while (right < n)
+        {
+            if (nums[right] != val)
+            {
+                swap(nums[left++], nums[right]);
+            }
+            right++;
+        }
+        return left;
+    }
+
+    //28 匹配字符串
+    // 暴力枚举
+    int strStr(string haystack, string needle) {
+        int n = haystack.size(), m = needle.size();
+        for (int i = 0; i + m <= n; i++) {
+            bool flag = true;
+            for (int j = 0; j < m; j++) {
+                if (haystack[i + j] != needle[j]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }
 
