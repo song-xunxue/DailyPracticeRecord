@@ -219,5 +219,55 @@ public:
         }
         return -1;
     }
+
+    //29   两数相除 
+    int divide(int dividend, int divisor) {
+        int ans = 0;
+        bool flag = false;
+        if (dividend == INT_MIN && divisor == -1) return INT_MAX;
+        if (dividend < 0 && divisor>0 || dividend > 0 && divisor < 0) flag = true;
+        dividend = dividend < 0 ? dividend : -dividend;
+        divisor = divisor < 0 ? divisor : -divisor;
+        while (dividend <= divisor) {
+            int d = divisor, q = -1;
+            while (d >= dividend - d) {
+                d <<= 1;
+                q <<= 1;
+            }
+            dividend -= d;
+            ans += q;
+        }
+        return flag ? ans : -ans;
+    }
+
+    //30 串联所有单词的子串 双指针 卡了我好久
+    vector<int> findSubstring(string s, vector<string>& words)
+    {
+        int n = s.size(), m = words.size(), len = words[0].size();
+        vector<int> ret;
+        if (n < m)   return ret;
+
+        unordered_map<string, int> hash1;
+        for (const auto& w : words)    hash1[w]++;
+
+        for (int i = 0; i < len; i++)
+        {
+
+            unordered_map<string, int> hash2;
+            for (int left = i, right = i, count = 0; right + len <= n; right += len)
+            {
+                string in = s.substr(right, len);
+                if (++hash2[in] <= hash1[in])  count++;
+                if (right - left + 1 > len * m)
+                {
+                    string out = s.substr(left, len);
+                    if (hash2[out]-- <= hash1[out])    count--;
+                    left += len;
+                }
+                if (count == m)    ret.push_back(left);
+            }
+        }
+        return ret;
+    }
 }
 
