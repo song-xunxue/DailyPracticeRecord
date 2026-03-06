@@ -353,5 +353,138 @@ public:
         //
     }
 
+    //34 排序数组中查找元素的第一个位置和最后一个位置 二分模版
+    vector<int> searchRange(vector<int>& nums, int target) {
+        // 查找区间的左端点和右端点
+        int n = nums.size();
+        if (!n)  return { -1,-1 };
+        int left = 0, right = n - 1;
+        while (left < right)
+        {
+            int mid = left + (right - left) / 2;
+            if (nums[left] == target) break;
+            if (nums[mid] >= target) right = mid;
+            else left = mid + 1;
+        }
+        int begin = 0;
+        if (nums[left] != target) return{ -1,-1 };
+        else
+        {
+            begin = left;
+            right = n - 1;
+        }
+
+        while (left < right)
+        {
+            if (nums[right] == target) break;
+            int mid = left + (right - left + 1) / 2;
+            if (nums[mid] <= target) left = mid;
+            else right = mid - 1;
+        }
+        return { begin,right };
+    }
+
+    //调用库函数法
+    int My_lower_bound(vector<int>& nums, int target)
+    {
+        int left = 0, right = nums.size();//  左闭右开 返回下标[0,n]
+        while (left < right)
+        {
+            // if (nums[left] == target)    return left;
+            int mid = left + (right - left) / 2;
+            if (nums[mid] < target) left = mid + 1;
+            else right = mid;
+        }
+        return left;
+    }
+    vector<int> searchRange2(vector<int>& nums, int target) {
+        if (nums.size() == 0)  return { -1,-1 };
+        int begin = My_lower_bound(nums, target);
+        if (begin == nums.size() || nums[begin] != target) return { -1,-1 };
+        if (begin == nums.size() - 1)    return { begin,begin };
+        int end = My_lower_bound(nums, target + 1) - 1;
+        return { begin,end };
+    }
+
+    //35 搜索插入位置
+    int searchInsert(vector<int>& nums, int target) {
+        int left = 0, right = nums.size();
+        while (left < right)
+        {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] < target)    left = mid + 1;
+            else    right = mid;
+        }
+        return right;
+    }
+
+    //36 判断数独是否有效
+    //暴力枚举
+    bool isValidSudoku(vector<vector<char>>& board) {
+        for (auto& v : board)
+        {
+            int arr[10] = { 0 };
+            for (auto& c : v)
+            {
+                if (c != '.' && ++arr[c - '0'] > 1)    return false;
+            }
+        }
+        static int n = 9;
+        for (int i = 0; i < n; i++)
+        {
+            int arr[10] = { 0 };
+            for (int j = 0; j < n; j++)
+            {
+                auto c = board[j][i];
+                if (c != '.' && ++arr[c - '0'] > 1)    return false;
+            }
+        }
+        for (int i = 0; i < n; i += 3)
+        {
+            for (int j = 0; j < n; j += 3)
+            {
+                //i,j为左上角的坐标
+                auto Jude = [&](int i, int j) {
+                    int arr[10] = { 0 };
+                    for (int k = i; k < i + 3; k++)
+                    {
+                        for (int l = j; l < j + 3; l++)
+                        {
+                            auto c = board[k][l];
+                            if (c != '.' && ++arr[c - '0'] > 1)    return true;
+                        }
+                    }
+                    return false;
+                    };
+
+                if (Jude(i, j))   return false;
+            }
+        }
+        return true;
+    }
+
+    //  简化一次遍历
+    bool isValidSudoku(vector<vector<char>>& board) {
+        bool rows[9][10];
+        bool cows[9][10];
+        bool palaces[3][3][10];
+
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                auto c = board[i][j];
+                if (c == '.')  continue;
+                int x = c - '0';
+                if (rows[i][x] || cows[j][x] || palaces[i / 3][j / 3][x])
+                {
+                    return false;
+                }
+
+                rows[i][x] = cows[j][x] = palaces[i / 3][j / 3][x] = true;
+            }
+        }
+        return true;
+    }
 }
 
