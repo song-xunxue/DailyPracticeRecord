@@ -269,5 +269,89 @@ public:
         }
         return ret;
     }
+
+    //31 下一个排列 
+    // 从后向前找降序排列[i+1,n),的前一个元素 i 为较小值，元素i  < 元素 i+1
+    // 再找降序排列中的刚好小于较大值的元素j 为较大值 ， j > i
+    //交换两者 i,j ( [i+1,n-1] 必定为降序序列 )并 对降序序列重排为升序 
+    // [j i+1 ...j-1  i  j+1...n-1]->[j n-1 n-2 ... i ... i+1]
+    void nextPermutation(vector<int>& nums) {
+        // next_permutation(nums.begin(),nums.end());
+        int i = nums.size() - 2;
+        while (i >= 0 && nums[i] >= nums[i + 1]) {
+            i--;
+        }
+        if (i >= 0) {
+            int j = nums.size() - 1;
+            while (j >= 0 && nums[i] >= nums[j]) {
+                j--;
+            }
+            swap(nums[i], nums[j]);
+        }
+        reverse(nums.begin() + i + 1, nums.end());
+    }
+
+    //32  最长匹配括号
+    int longestValidParentheses(string s) {
+        stack<int> stk;
+        stk.push(-1);
+        int ans = 0;
+
+        for (int i = 0; i < s.size(); ++i) {
+            if (s[i] == '(') {
+                stk.push(i);
+            }
+            else {
+                if (stk.size() > 1) {
+                    // s[i]==')' && stk.size() >1
+                    stk.pop();
+                    ans = max(ans, i - stk.top());
+                }
+                else        stk.top() = i;
+            }
+        }
+        return ans;
+    }
+
+    // 33 旋转数组中查找目标值
+    // 二分查找 分类
+    int search(vector<int>& nums, int target) {
+        int n = nums.size();
+        if (n == 1)    return nums[0] == target ? 0 : -1;
+        int left = 0, right = n - 1;
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] == target) return mid;
+            if (nums[0] <= nums[mid])
+            {
+                if (nums[mid] > target && target >= nums[0]) right = mid - 1;
+                else left = mid + 1;
+            }
+            else //nums[mid] < nums[n-1]
+            {
+                // if(nums[mid]>target) r=mid-1;
+                // else if(target > nums[mid] && target <nums[n-1])
+                //     left=mid+1;
+                // eles if(target > nums[n-1])
+                //     r=mid-1;
+                if (target > nums[mid] && target <= nums[n - 1])   left = mid + 1;
+                else right = mid - 1;
+            }
+        }
+        return  -1;
+        // 查找最小值
+        // int left=0,right=nums.size()-1;
+        // int x=nums[right];
+        // while(left<right)
+        // {
+        //     int mid=left+(right-left)/2;
+        //     if(nums[mid] > x)   left=mid+1;
+        //     else right=mid;
+        // }
+        // return nums[left]==target ? left :-1;
+        //
+    }
+
 }
 
