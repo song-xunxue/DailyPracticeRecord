@@ -486,5 +486,162 @@ public:
         }
         return true;
     }
-}
+
+    // 37 解数独 回溯
+    void solveSudoku(vector<vector<char>>& board) {
+        int nums[9] = { 0,1,2,3,4,5,6,7,8 };
+        bool rows[9][9]{ false };
+        bool cols[9][9]{ false };
+        bool palaces[3][3][9]{ false };
+
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                char c = board[i][j];
+                if (c == '.') continue;
+                int x = c - '1';
+                rows[i][x] = true;
+                cols[j][x] = true;
+                palaces[i / 3][j / 3][x] = true;
+            }
+        }
+
+        function<bool(vector<vector<char>>&, int, int)> dps;
+        dps = [&](vector<vector<char>>& board, int i, int j)
+            {
+                for (int row = i; row < 9; row++)
+                {
+                    int start_col = (row == i) ? j : 0;
+                    for (int col = start_col; col < 9; col++)
+                    {
+                        auto& c = board[row][col];
+                        if (c != '.')  continue;
+                        for (auto x : nums)
+                        {
+                            if (!rows[row][x] && !cols[col][x] && !palaces[row / 3][col / 3][x])
+                            {
+                                rows[row][x] = cols[col][x] = palaces[row / 3][col / 3][x] = true;
+                                c = char(x + '1');
+
+                                if (dps(board, row, col + 1))  return    true;
+
+                                c = '.';
+                                rows[row][x] = cols[col][x] = palaces[row / 3][col / 3][x] = false;
+                            }
+                        }
+                        return false;
+                    }
+                }
+                return true;
+            };
+        dps(board, 0, 0);
+    }
+
+    // 38 表观数组
+    string countAndSay(int n) {
+        string ans = "1";
+        while (--n)
+        {
+            string temp = "";
+            int m = ans.size();
+            int l = 0, r = 0;
+            while (r < m)
+            {
+                while (ans[l] == ans[r] && r < m)    r++;
+                temp += (r - l) + '0';
+                temp += ans[l];
+                l = r;
+            }
+            ans = move(temp);//移动赋值
+            cout << ans << endl;
+        }
+        return ans;
+    }
+
+    //39 组合总和
+    //void dfs(vector<int>& candidates, vector<vector<int>>& r, vector<int>& path, int target, int index)
+    //{
+    //    if (index == candidates.size())    return;
+    //    if (target == 0)
+    //    {
+    //        r.emplace_back(path);
+    //        return;
+    //    }
+    //    //跳过
+    //    dfs(candidates, r, path, target, index + 1);
+    //    //选择
+    //    if (target - candidates[index] >= 0)
+    //    {
+    //        path.emplace_back(candidates[index]);
+    //        dfs(candidates, r, path, target - candidates[index], index);
+    //        path.pop_back();
+    //    }
+    //    return;
+    //}
+
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> result;
+        vector<int> path;
+        // dfs(candidates,r,temp,target,0);
+        // return r;
+
+        // 使用 auto 自调用 lambda 实现 DFS
+        function<void(int index, int current_target)> dfs;
+        dfs = [&](int index, int current_target) {
+            if (index == candidates.size()) {
+                return;
+            }
+            if (current_target == 0) {
+                result.push_back(path);
+                return;
+            }
+
+            dfs(index + 1, current_target);
+
+            if (current_target - candidates[index] >= 0) {
+                path.push_back(candidates[index]);
+                dfs(index, current_target - candidates[index]);
+                path.pop_back();
+            }
+            };
+
+        dfs(0, target);
+
+        return result;
+    }
+
+    // 组合总和II
+    void dps(vector<int>& candidates, vector<vector<int>>& ans, vector<int>& path, int target, int idx)
+    {
+        if (target == 0)
+        {
+            ans.push_back(path);
+            return;
+        }
+        if (idx == candidates.size())  return;
+        //跳过
+        // dps(candidates,ans,path,target,idx+1);
+
+        //选择
+        for (int i = idx; i < candidates.size(); i++)
+        {
+            // 遍历去重 +
+            if (i > idx && candidates[i] == candidates[i - 1])   continue;
+            // 剪枝跳过
+            if (candidates[i] > target) break;
+            path.push_back(candidates[i]);
+            dps(candidates, ans, path, target - candidates[i], i + 1);
+            path.pop_back();
+        }
+        return;
+    }
+
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<vector<int>> ans;
+        vector<int> path;
+        ranges::sort(candidates);
+        dps(candidates, ans, path, target, 0);
+        return ans;
+    }
+};
 
