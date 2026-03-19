@@ -2,21 +2,12 @@
 //#include "21_40.h"
 
 #include "41-60.h"
-
+#include <chrono>
 int main()
 {
-	vector<int> nums = { 1,1,2 };
+	//vector<int> nums = { 1,1,2 };
 	Solution sp;
-	auto it = sp.permuteUnique(nums);
-	for (auto& v : it)
-	{
-		for (auto& x : v)
-		{
-			cout << x << " ";
-		}
-		puts("");
-	}
-
+	cout << sp.totalNQueens(4) << endl;
 
 	return 0;
 }
