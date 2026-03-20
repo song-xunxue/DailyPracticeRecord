@@ -493,4 +493,80 @@ public:
         return solveNQueens(n).size();
     }
 
+    //53 最大子数组和
+    // 本质是动态规划，这里简化了一下
+    int maxSubArray(vector<int>& nums) {
+        int res = INT_MIN, sum = 0;
+        int pre_min = 0;
+        for (const auto& x : nums)
+        {
+            sum += x;
+            res = max(res, sum - pre_min);
+            pre_min = min(pre_min, sum);
+        }
+        return res;
+    }
+
+    //54 螺旋数组
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        int total = m * n;
+        vector<int> r(total);
+        vector<vector<int>> diretionV = { {0,1},{1,0},{0,-1},{-1,0} };
+        vector<vector<bool>> vivisted(m, vector<bool>(n, false));
+        int diretion = 0, row = 0, col = 0, i = 0;
+        while (total--)
+        {
+            r[i++] = matrix[row][col];
+            vivisted[row][col] = true;
+            int nextrow = row + diretionV[diretion][0];
+            int nextcol = col + diretionV[diretion][1];
+            if (nextrow < 0 || nextrow >= m || nextcol < 0 || nextcol >= n || vivisted[nextrow][nextcol])
+            {
+                diretion = (diretion + 1) % 4;
+            }
+            row += diretionV[diretion][0], col += diretionV[diretion][1];
+
+        }
+        return r;
+    }
+
+    //55 跳跃游戏 参考45
+    // 有所不同，这个是判断使用能够跳跃，数组有0
+    bool canJump(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dis(n);
+        for (int i = 0; i < n; i++)
+        {
+            dis[i] = i + nums[i];
+        }
+        int left = 0, right = 0;
+        int idx = 0;
+        while (idx < n-1)
+        {
+            right = max(right, dis[idx]);
+            if (right == idx)
+            {
+                if (dis[idx] == idx) return false;
+                else left = right;
+            }
+            idx++;
+        }
+        return true;
+    }
+    // 官方题解 简化
+    bool canJump(vector<int>& nums) {
+        int n = nums.size();
+        int rightmost = 0;
+        for (int i = 0; i < n; ++i) {
+            if (i <= rightmost) {
+                rightmost = max(rightmost, i + nums[i]);
+                if (rightmost >= n - 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
 };
