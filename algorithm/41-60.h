@@ -555,18 +555,132 @@ public:
         return true;
     }
     // 官方题解 简化
-    bool canJump(vector<int>& nums) {
-        int n = nums.size();
-        int rightmost = 0;
-        for (int i = 0; i < n; ++i) {
-            if (i <= rightmost) {
-                rightmost = max(rightmost, i + nums[i]);
-                if (rightmost >= n - 1) {
-                    return true;
+    //bool canJump(vector<int>& nums) {
+    //    int n = nums.size();
+    //    int rightmost = 0;
+    //    for (int i = 0; i < n; ++i) {
+    //        if (i <= rightmost) {
+    //            rightmost = max(rightmost, i + nums[i]);
+    //            if (rightmost >= n - 1) {
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+
+    //}
+
+    //56 合并区间 
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        int n = intervals.size();
+        if (n <= 1)    return intervals;
+
+        vector<vector<int>> ans;
+        //auto mySort = [&](vector<int> v1, vector<int>v2)
+        //    {
+        //        return v1[0] < v2[0];
+        //    };
+
+        sort(intervals.begin(), intervals.end());
+
+        int idx = 0;
+        while(idx<n)
+        {
+            auto cur = intervals[idx];
+            if (ans.empty() || ans.back()[1] < cur[0])
+            {
+                ans.emplace_back(cur);
+            }
+            else
+            {
+                auto& _max = ans.back()[1];
+                _max = max(_max, cur[1]);
+            }
+            idx++;
+        }
+        return ans;
+    }
+
+    //57 插入区间
+    // 非常直观的思路
+
+    //vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+    //    vector<vector<int>> ans;
+    //    intervals.push_back(newInterval);
+    //    ranges::sort(intervals);
+    //    for (auto& v : intervals)
+    //    {
+    //        if (ans.empty() || ans.back()[1] < v[0])
+    //        {
+    //            ans.push_back(move(v));
+    //        }
+    //        else
+    //        {
+    //            auto& _max = ans.back()[1];
+    //            _max = max(_max, v[1]);
+    //        }
+    //    }
+    //    return ans;
+    //}
+
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        vector<vector<int>> ans;
+        int left = newInterval[0];
+        int right = newInterval[1];
+        bool flag = false;
+        for (auto& v : intervals)
+        {
+            //一遍扫描
+            if (v[1] < left)
+            {
+                //在左侧无交集
+                ans.push_back(move(v));
+            }
+            else if (v[0] > right)
+            {
+                //在右侧无交集
+                if (!flag)
+                {
+                    ans.push_back({ left,right });
+                    flag = true;
                 }
+                ans.push_back(move(v));
+            }
+            else
+            {
+                //有交集
+                left = min(left, v[0]);
+                right = max(right, v[1]);
             }
         }
-        return false;
-
+        if (!flag)   ans.push_back({ left,right });
+        return ans;
     }
+
+    //58 最后一个单词的长度
+    // 简单模拟 
+    int lengthOfLastWord(string s) {
+        vector<char> temp;
+        int n = s.size();
+        int ans = 0;
+        int begin = 0, end = 0;
+        for (auto& c : s)
+        {
+            if (c != ' ')
+            {
+                temp.push_back(c);
+            }
+            else if (temp.empty())   continue;
+            else
+            {
+                ans = temp.size();
+                temp.clear();
+            }
+        }
+        if (!temp.empty())   ans = temp.size();
+        return ans;
+    }
+
+    // 59
+
 };
