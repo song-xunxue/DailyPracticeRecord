@@ -1,0 +1,10 @@
+9
+Arrive Mike
+Arrive Zhangsan
+QueueHead
+QueueTail
+Leave
+QueueHead
+Leave
+QueueHead
+QueueTail
